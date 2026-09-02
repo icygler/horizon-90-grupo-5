@@ -10,12 +10,12 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from horizon90.bedrock import BedrockClient
 from horizon90.config import Settings
 from horizon90.models import ArchiveResult, ScenarioInput
 from horizon90.service import HorizonService
 from horizon90.storage import ReplayStorage
 from horizon90.tidb import TiDBRepository
+from horizon90.openai_client import OpenAIClient
 
 
 STATIC_DIR = Path(__file__).with_name("static")
@@ -41,9 +41,9 @@ class UnavailableRepository:
         raise ConnectionError("TiDB não configurado")
 
 
-class UnavailableBedrock:
+class UnavailableLLM:
     def invoke_json(self, prompt: str, model_id: str | None = None):
-        raise ConnectionError("Bedrock não configurado")
+        raise ConnectionError("LLM não configurado")
 
 
 class UnavailableStorage:
@@ -55,18 +55,18 @@ def default_service() -> HorizonService:
     try:
         settings = Settings.from_env()
     except ValueError:
-        return HorizonService(UnavailableRepository(), UnavailableBedrock(), UnavailableStorage())
+        return HorizonService(UnavailableRepository(), UnavailableLLM(), UnavailableStorage())
 
     repository = TiDBRepository(settings)
     try:
-        bedrock: Any = BedrockClient.from_env()
+        llm: Any = OpenAIClient.from_env()
     except ValueError:
-        bedrock = UnavailableBedrock()
+        llm = UnavailableLLM()
     try:
         storage: Any = ReplayStorage.from_settings(settings)
     except Exception:
         storage = UnavailableStorage()
-    return HorizonService(repository, bedrock, storage)
+    return HorizonService(repository, llm, storage)
 
 
 def create_app(service: HorizonService | Any | None = None) -> FastAPI:

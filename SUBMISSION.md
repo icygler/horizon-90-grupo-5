@@ -6,17 +6,18 @@ https://github.com/icygler/horizon-90-grupo-5
 
 ## Stack — marque apenas o que foi validado ao vivo
 
-- [ ] TiDB Cloud Starter na AWS `sa-east-1`
-- [ ] Busca vetorial no TiDB com `VECTOR(1024)` e `EMBED_TEXT`
+- [x] TiDB Cloud Starter na AWS `sa-east-1`
+- [x] Busca vetorial no TiDB com `VECTOR(1024)` e `EMBED_TEXT`
 - [ ] Amazon Bedrock em `ap-southeast-1`
 - [ ] Publicado na AWS — URL no ar:
-- [ ] Evidências de especificação em `.kiro/` commitadas
+- [x] GPT-5.6 Luna via OpenAI Responses (execução local)
+- [x] Evidências de especificação em `.kiro/` commitadas
 
 ## Onde olhar
 
 - Conexão e agregados TiDB: `src/horizon90/tidb.py`
 - Esquema e auto-embedding vetorial: `sql/schema.sql`
-- Chamadas Bedrock e separação Haiku/Sonnet: `src/horizon90/bedrock.py` e `src/horizon90/rehearsal.py`
+- OpenAI Responses, GPT-5.6 Luna e JSON estruturado: `src/horizon90/openai_client.py`
 - Rehearsal inspirado no MiroFish: `src/horizon90/rehearsal.py`
 - Prefixo S3 do Grupo 5: `src/horizon90/storage.py`
 - Preflight independente: `scripts/preflight.py`

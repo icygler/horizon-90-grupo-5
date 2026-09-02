@@ -11,14 +11,14 @@ from horizon90.seed import CURATED_EVIDENCE, FIXED_STRATEGIES
 
 
 class HorizonService:
-    def __init__(self, repository: Any, bedrock: Any, storage: Any):
+    def __init__(self, repository: Any, llm: Any, storage: Any):
         self.repository = repository
-        self.bedrock = bedrock
+        self.llm = llm
         self.storage = storage
         self._runs: dict[str, RunResult] = {}
 
     def run(self, contract: ScenarioContract) -> RunResult:
-        status = IntegrationStatus(tidb="real", vector="real", bedrock="real", s3="unavailable")
+        status = IntegrationStatus(tidb="real", vector="real", llm="real", s3="unavailable")
         try:
             exposure = self.repository.fetch_exposure(contract)
             evidence = self.repository.find_evidence(self._evidence_query(contract), limit=3)
@@ -36,9 +36,9 @@ class HorizonService:
             ]
             status = status.model_copy(update={"tidb": "fallback", "vector": "fallback"})
 
-        reactions = run_rehearsal(contract, exposure, evidence, self.bedrock)
+        reactions = run_rehearsal(contract, exposure, evidence, self.llm)
         if any(reaction.availability == "unavailable" for reaction in reactions):
-            status = status.model_copy(update={"bedrock": "unavailable"})
+            status = status.model_copy(update={"llm": "unavailable"})
         result = RunResult(
             run_id=str(uuid4()),
             contract=contract,
@@ -61,7 +61,7 @@ class HorizonService:
             run.evidence,
             run.reactions,
             strategy_id,
-            self.bedrock,
+            self.llm,
         )
         archive = self.storage.write(pack)
         s3_status = "real" if archive.status == "archived" else "unavailable"

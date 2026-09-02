@@ -6,13 +6,13 @@ import json
 import sys
 from typing import Any
 
-from horizon90.bedrock import BedrockClient
 from horizon90.config import Settings
+from horizon90.openai_client import OpenAIClient
 from horizon90.storage import ReplayStorage
 from horizon90.tidb import TiDBRepository
 
 
-def run_preflight(settings: Settings | object, tidb: Any = None, bedrock: Any = None, storage: Any = None) -> dict[str, str]:
+def run_preflight(settings: Settings | object, tidb: Any = None, llm: Any = None, storage: Any = None) -> dict[str, str]:
     result: dict[str, str] = {}
     repository = tidb or TiDBRepository(settings)
     try:
@@ -26,11 +26,11 @@ def run_preflight(settings: Settings | object, tidb: Any = None, bedrock: Any = 
     except Exception:
         result["vector"] = "failed"
     try:
-        client = bedrock or BedrockClient.from_env()
+        client = llm or OpenAIClient.from_env()
         client.invoke_json('{"check":"ping"}')
-        result["bedrock"] = "ok"
+        result["llm"] = "ok"
     except Exception:
-        result["bedrock"] = "failed"
+        result["llm"] = "failed"
     try:
         archive = (storage or ReplayStorage.from_settings(settings)).write_json("preflight", {"check": "ok"})
         result["s3"] = "ok" if archive.status == "archived" else "failed"

@@ -43,7 +43,7 @@ class FakeService:
                     availability="real",
                 )
             ],
-            integration_status=IntegrationStatus(tidb="fallback", vector="fallback", bedrock="real", s3="unavailable"),
+            integration_status=IntegrationStatus(tidb="fallback", vector="fallback", llm="real", s3="unavailable"),
         )
 
 

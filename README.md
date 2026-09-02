@@ -28,7 +28,7 @@ Abra `http://127.0.0.1:8000`. Sem `.env`, a demonstração continua disponível 
 Copie `.env.example` para `.env` e preencha apenas localmente, sem versionar:
 
 - `TIDB_HOST`, `TIDB_USER`, `TIDB_PASSWORD`, `TIDB_DATABASE`
-- `AWS_BEARER_TOKEN_BEDROCK`
+- `OPENAI_API_KEY` (GPT-5.6 Luna via Responses API)
 
 O S3 já usa o bucket do evento e o prefixo reservado ao Grupo 5. Crie o cluster TiDB Cloud Starter em AWS São Paulo e carregue o `airportdb` antes do preflight.
 

@@ -72,7 +72,7 @@ class AgentReaction(BaseModel):
 class IntegrationStatus(BaseModel):
     tidb: Literal["real", "fallback", "unavailable"]
     vector: Literal["real", "fallback", "unavailable"]
-    bedrock: Literal["real", "fallback", "unavailable"]
+    llm: Literal["real", "fallback", "unavailable"]
     s3: Literal["real", "fallback", "unavailable"]
 
 

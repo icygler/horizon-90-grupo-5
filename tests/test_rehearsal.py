@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from horizon90.bedrock import SONNET_ID
+from horizon90.openai_client import LUNA_ID
 from horizon90.models import Evidence, ExposureSummary, ScenarioContract
 from horizon90.rehearsal import build_decision_pack, run_rehearsal
 
@@ -85,7 +85,7 @@ def test_rehearsal_labels_unavailable_actor_responses():
     assert all(reaction.availability == "unavailable" for reaction in reactions)
 
 
-def test_decision_pack_uses_sonnet_only_after_strategy_selection():
+def test_decision_pack_uses_luna_only_after_strategy_selection():
     bedrock = FakeBedrock()
     reactions = run_rehearsal(seeded_contract(), seeded_exposure(), seeded_evidence(), bedrock)
 
@@ -99,4 +99,4 @@ def test_decision_pack_uses_sonnet_only_after_strategy_selection():
     )
 
     assert pack.selected_strategy_id == "PROTEGER_CONEXOES"
-    assert bedrock.model_ids[-1] == SONNET_ID
+    assert bedrock.model_ids[-1] == LUNA_ID

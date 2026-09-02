@@ -6,8 +6,8 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 from uuid import uuid4
 
-from horizon90.bedrock import HAIKU_ID, SONNET_ID
 from horizon90.models import AgentReaction, DecisionPack, Evidence, ExposureSummary, ScenarioContract
+from horizon90.openai_client import LUNA_ID
 from horizon90.seed import ACTORS, FIXED_STRATEGIES, ActorDefinition
 
 
@@ -15,11 +15,11 @@ def run_rehearsal(
     contract: ScenarioContract,
     exposure: ExposureSummary,
     evidence: list[Evidence],
-    bedrock: Any,
+    llm: Any,
 ) -> list[AgentReaction]:
     """Run exactly one independent reaction for each fixed stakeholder role."""
     with ThreadPoolExecutor(max_workers=len(ACTORS)) as pool:
-        futures = [pool.submit(_run_actor, actor, contract, exposure, evidence, bedrock) for actor in ACTORS]
+        futures = [pool.submit(_run_actor, actor, contract, exposure, evidence, llm) for actor in ACTORS]
         return [future.result(timeout=20) for future in futures]
 
 
@@ -29,7 +29,7 @@ def build_decision_pack(
     evidence: list[Evidence],
     reactions: list[AgentReaction],
     selected_strategy_id: str,
-    bedrock: Any,
+    llm: Any,
 ) -> DecisionPack:
     """Generate a final, reviewable recommendation only after strategy selection."""
     selected = next((item for item in FIXED_STRATEGIES if item.id == selected_strategy_id), None)
@@ -38,7 +38,7 @@ def build_decision_pack(
     prompt = _decision_prompt(contract, exposure, evidence, reactions, selected_strategy_id)
     decision_id = str(uuid4())
     try:
-        payload = bedrock.invoke_json(prompt, model_id=SONNET_ID)
+        payload = llm.invoke_json(prompt, model_id=LUNA_ID)
         return DecisionPack(
             decision_id=decision_id,
             selected_strategy_id=selected_strategy_id,
@@ -65,11 +65,11 @@ def _run_actor(
     contract: ScenarioContract,
     exposure: ExposureSummary,
     evidence: list[Evidence],
-    bedrock: Any,
+    llm: Any,
 ) -> AgentReaction:
     prompt = _actor_prompt(actor, contract, exposure, evidence)
     try:
-        payload = bedrock.invoke_json(prompt, model_id=HAIKU_ID)
+        payload = llm.invoke_json(prompt, model_id=LUNA_ID)
         return AgentReaction(
             actor_id=actor.actor_id,
             actor_label=actor.label,
