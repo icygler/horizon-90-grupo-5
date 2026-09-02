@@ -33,10 +33,21 @@ Copie `.env.example` para `.env` e preencha apenas localmente, sem versionar:
 O S3 já usa o bucket do evento e o prefixo reservado ao Grupo 5. Crie o cluster TiDB Cloud Starter em AWS São Paulo e carregue o `airportdb` antes do preflight.
 
 ```bash
+python scripts/import_airportdb.py
 python scripts/preflight.py
 ```
 
 O preflight imprime somente os estados `ok` ou `failed`; nunca imprime segredos.
+
+### Alternativa sem IAM para importação
+
+Caso a conta do evento não permita criar a IAM Role que o importador gerenciado do TiDB exige, use o importador TLS direto incluído no repositório. Ele lê o dump oficial em `tmp/data/hackathon_airportdb.sql.gz`, usa somente as variáveis TiDB do `.env` local e não registra linhas do dataset:
+
+```bash
+python scripts/import_airportdb.py
+```
+
+Depois de importar, inicie o app uma vez com o `.env` preenchido. Ele consulta apenas agregados do `airportdb` e mantém os estados das integrações explícitos na tela.
 
 ## Deploy no EC2 do evento
 
