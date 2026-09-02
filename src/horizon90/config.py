@@ -3,6 +3,8 @@
 from dataclasses import dataclass
 import os
 
+from dotenv import load_dotenv
+
 
 @dataclass(frozen=True)
 class Settings:
@@ -17,6 +19,7 @@ class Settings:
 
     @classmethod
     def from_env(cls) -> "Settings":
+        load_dotenv()
         required = ("TIDB_HOST", "TIDB_USER", "TIDB_PASSWORD", "TIDB_DATABASE")
         missing = [key for key in required if not os.getenv(key)]
         if missing:
@@ -31,4 +34,3 @@ class Settings:
             s3_bucket=os.getenv("S3_BUCKET", "tidb-latam-hackathon-2026-048364544505"),
             s3_prefix=os.getenv("S3_PREFIX", "latam-hackathon-005"),
         )
-
