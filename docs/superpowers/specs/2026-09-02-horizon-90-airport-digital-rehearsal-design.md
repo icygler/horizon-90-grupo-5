@@ -2,7 +2,7 @@
 
 ## Status
 
-Approved for implementation on 2026-09-02.
+Revised MVP approved for implementation on 2026-09-02.
 
 ## Product decision
 
@@ -15,7 +15,7 @@ The audience is the airport or airline operations duty manager deciding how to r
 - Turn a natural-language disruption scenario into explicit, reviewable assumptions.
 - Quantify the scenario's exposure from structured data when available.
 - Retrieve semantically similar policies, incident notes, and prior decision packs from TiDB.
-- Compare three interventions through multi-agent stakeholder reactions.
+- Compare three fixed interventions through a lightweight multi-agent stakeholder rehearsal.
 - Produce a concise decision pack with evidence, risks, trade-offs, and follow-up questions.
 - Demonstrate TiDB Cloud, TiDB Vector Search, Amazon Bedrock, S3, EC2 deployment, and Kiro specifications.
 
@@ -35,21 +35,22 @@ The audience is the airport or airline operations duty manager deciding how to r
 - Public application ports are 3000 and 8000-8999. The process must bind to `0.0.0.0`.
 - TiDB Cloud Starter is the persistent store and has a public TLS endpoint.
 - The `airportdb` dataset is optional. When used, it supplies a simulation baseline, not ground truth about a current airport.
+- The deployed process is one lightweight FastAPI application serving static HTML, CSS, and JavaScript. No Node runtime is required on EC2.
 
 ## Core workflow
 
-1. The operator enters a scenario such as: "At 17:00, runway capacity at GRU drops by 30% for 90 minutes."
-2. Bedrock converts it to a scenario contract: place, operating window, capacity change, and stated assumptions.
-3. The API queries TiDB for affected planned flights, booking counts, aircraft capacity, and available weather context. If no matching data exists, it uses an explicitly marked seeded demo scenario.
+1. The operator starts from the seeded GRU capacity-reduction case or fills a structured scenario form. Natural language may prefill the form, but the operator confirms location, time window, duration, and capacity reduction before a run.
+2. Bedrock converts the optional free-text description to a scenario contract, with any missing values kept explicit rather than invented.
+3. The API queries TiDB for affected planned flights, booking counts, and aircraft capacity. Weather is not joined unless a verified mapping between station and airport is supplied. If no matching data exists, it uses an explicitly marked seeded demo scenario.
 4. TiDB Vector Search retrieves relevant operational notes and policy chunks.
 5. The app generates three intervention options with deterministic exposure metrics plus AI-written rationale.
-6. A lightweight multi-agent simulation runs two rounds for six named stakeholder roles. Each role receives only aggregate, scenario-specific context and has a defined objective.
-7. Bedrock synthesizes the reactions into an evidence-backed decision pack. The operator selects an option but no external action occurs.
+6. A lightweight multi-agent rehearsal runs one round for four named stakeholder roles. Each role receives only aggregate, scenario-specific context and has a defined objective. Role requests run concurrently and return a short structured response.
+7. Bedrock Haiku performs scenario extraction and the role rehearsal. Bedrock Sonnet is called only after the operator requests the final evidence-backed decision pack. The operator selects an option but no external action occurs.
 8. The source packet and decision-pack JSON are stored under the team S3 prefix; metadata, citations, and summaries remain in TiDB.
 
 ## MiroFish relationship
 
-The primary mode is `lightweight_multi_agent`. It is inspired by MiroFish's pattern of actors, incentives, memories, interaction rounds, and a structured report, but it is implemented inside the app using Bedrock and TiDB. It must be labeled exactly as "multi-agent rehearsal" and never as MiroFish.
+The primary mode is `lightweight_multi_agent`. It is inspired by MiroFish's pattern of actors, incentives, memories, interaction rounds, and a structured report, but it is implemented inside the app using Bedrock and TiDB. It must be labeled exactly as "multi-agent rehearsal inspired by MiroFish" and never as an integrated MiroFish runtime.
 
 An optional `imported_mirofish` mode accepts a MiroFish report generated outside the EC2 instance. It stores the original report in S3, preserves provider and run identifiers in TiDB, and labels its evidence as "MiroFish report". Full MiroFish is not deployed as part of the MVP because it requires its own LLM-compatible configuration and Zep Cloud key, while the hackathon EC2 is memory constrained.
 
@@ -74,8 +75,8 @@ flowchart LR
 
 | Component | Responsibility |
 |---|---|
-| React/Vite console | Scenario composer, exposure view, strategy comparison, stakeholder reactions, final decision pack. |
-| FastAPI API | Validates requests, orchestrates database retrieval, Bedrock calls, multi-agent rounds, and artifact writes. |
+| Static console | Scenario composer, exposure view, strategy comparison, stakeholder reactions, and final decision pack, served by FastAPI. |
+| FastAPI application | Validates requests, serves the console, orchestrates database retrieval, Bedrock calls, one multi-agent round, and artifact writes. |
 | TiDB Cloud Starter | Stores scenario state, aggregate exposure, policies, evidence chunks, simulation reactions, and decision-pack metadata. |
 | TiDB auto-embedding | Generates and searches vectors for notes and policy chunks using `EMBED_TEXT`. |
 | Bedrock Haiku | Fast extraction, role responses, and structured intermediate results. |
@@ -99,7 +100,7 @@ flowchart LR
 
 ## Stakeholder simulation
 
-The six fixed roles are: passenger with a short connection, travelling family, airline operations center, airport duty manager, customer-service leader, and regulator/media observer.
+The four fixed roles are: passenger with a short connection, airline operations center, airport duty manager, and customer-service leader.
 
 Each role has:
 
@@ -107,24 +108,25 @@ Each role has:
 - constraints derived from the scenario contract;
 - aggregate exposure metrics;
 - retrieved evidence snippets;
-- two short rounds of response; and
+- one short response round; and
 - a structured output containing likely reaction, objection, pressure signal, and validation question.
 
 The system does not impersonate real people or infer facts about actual passengers.
 
 ## UX and demo path
 
-1. **Scenario composer**: choose a seeded scenario or type a new one.
+1. **Scenario composer**: choose the seeded scenario or complete location, time, duration, and capacity fields. Free text is optional and must be confirmed.
 2. **Scenario contract**: review the parsed time, location, event, and assumptions before running.
 3. **Exposure board**: show affected flights, passengers as aggregates, and evidence retrieved from TiDB.
 4. **Strategy board**: compare exactly three responses with clear trade-offs.
 5. **Rehearsal view**: show the six actors' pressure signals across two rounds.
 6. **Decision pack**: choose a response and export/save the evidence-backed replay.
 
-The two-minute demonstration uses a seeded GRU capacity-reduction case. This removes dependence on a live network or long-running inference while retaining real, inspectable TiDB and Bedrock paths.
+The two-minute demonstration uses a seeded GRU capacity-reduction case. The app attempts the real TiDB, vector, Bedrock, and S3 paths first. A clearly labelled cached visual fallback is available only if an external service fails during the demonstration.
 
 ## Error handling and fallbacks
 
+- Run preflight tests before the demo: TiDB TLS query, vector query, Bedrock Haiku call in Singapore, and S3 write/read in the team prefix.
 - If Bedrock is unavailable, render exposure metrics and pre-seeded strategy text, clearly labelled "AI synthesis unavailable".
 - If TiDB is unavailable, allow only the seeded local demo payload and label it "local demo fallback".
 - If S3 write fails, keep the decision pack in TiDB and show that the external replay was not archived.
@@ -140,7 +142,7 @@ The two-minute demonstration uses a seeded GRU capacity-reduction case. This rem
 
 ## Verification
 
-- Unit tests cover scenario-contract validation, deterministic exposure calculations, redaction, and strategy ordering.
+- Unit tests cover scenario-contract validation, deterministic exposure calculations, redaction, fixed strategy ordering, and role prompt composition.
 - Integration checks cover TiDB TLS connection, vector retrieval, Bedrock invocation in Singapore, and S3 team-prefix write.
 - Browser checks cover the end-to-end seeded scenario, decision selection, and responsive layout.
 - The repository will include `SUBMISSION.md`, `.kiro/` specifications, `.env.example`, source paths for TiDB/vector/Bedrock calls, and clear labels for all demo or fallback states.
