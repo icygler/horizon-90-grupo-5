@@ -1,5 +1,9 @@
 # Horizon 90 — Grupo 5
 
+## Repositório público
+
+https://github.com/icygler/horizon-90-grupo-5
+
 ## Stack — marque apenas o que foi validado ao vivo
 
 - [ ] TiDB Cloud Starter na AWS `sa-east-1`
