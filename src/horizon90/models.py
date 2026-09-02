@@ -84,6 +84,8 @@ class DecisionPack(BaseModel):
     evidence_ids: list[int]
     assumptions: list[str]
     human_validation_questions: list[str]
+    archive_status: Literal["archived", "not_archived", "not_requested"] = "not_requested"
+    archive_key: str | None = None
 
 
 class ArchiveResult(BaseModel):
