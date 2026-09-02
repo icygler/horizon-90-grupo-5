@@ -55,10 +55,9 @@ def default_service() -> HorizonService:
     storage: Any = LocalReplayStorage.default()
     try:
         settings = Settings.from_env()
+        repository: Any = TiDBRepository(settings)
     except ValueError:
-        return HorizonService(UnavailableRepository(), UnavailableLLM(), storage)
-
-    repository = TiDBRepository(settings)
+        repository = UnavailableRepository()
     try:
         llm: Any = OpenAIClient.from_env()
     except ValueError:
