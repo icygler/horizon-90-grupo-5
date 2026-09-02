@@ -43,7 +43,7 @@ class FakeService:
                     availability="real",
                 )
             ],
-            integration_status=IntegrationStatus(tidb="fallback", vector="fallback", llm="real", s3="unavailable"),
+            integration_status=IntegrationStatus(tidb="fallback", vector="fallback", llm="real", archive="real"),
         )
 
 
@@ -54,6 +54,13 @@ def test_seed_endpoint_returns_confirmed_gru_scenario():
     assert response.status_code == 200
     assert response.json()["airport_iata"] == "GRU"
     assert response.json()["confirmed"] is True
+
+
+def test_pitch_cover_and_operational_console_have_separate_routes():
+    client = TestClient(create_app(FakeService()))
+
+    assert "Horizon 90" in client.get("/").text
+    assert "CONTROLES DA SIMULAÇÃO" in client.get("/console").text
 
 
 def test_run_endpoint_requires_complete_confirmed_contract():

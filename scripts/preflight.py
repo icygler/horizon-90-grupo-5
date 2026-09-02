@@ -1,4 +1,4 @@
-"""Check each Horizon 90 cloud dependency independently without exposing secrets."""
+"""Check each Horizon 90 local demo dependency independently without exposing secrets."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from typing import Any
 
 from horizon90.config import Settings
 from horizon90.openai_client import OpenAIClient
-from horizon90.storage import ReplayStorage
+from horizon90.storage import LocalReplayStorage
 from horizon90.tidb import TiDBRepository
 
 
@@ -32,10 +32,10 @@ def run_preflight(settings: Settings | object, tidb: Any = None, llm: Any = None
     except Exception:
         result["llm"] = "failed"
     try:
-        archive = (storage or ReplayStorage.from_settings(settings)).write_json("preflight", {"check": "ok"})
-        result["s3"] = "ok" if archive.status == "archived" else "failed"
+        archive = (storage or LocalReplayStorage.default()).write_json("preflight", {"check": "ok"})
+        result["archive"] = "ok" if archive.status == "archived" else "failed"
     except Exception:
-        result["s3"] = "failed"
+        result["archive"] = "failed"
     return result
 
 

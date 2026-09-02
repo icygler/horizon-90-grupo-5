@@ -13,7 +13,7 @@ from pydantic import BaseModel
 from horizon90.config import Settings
 from horizon90.models import ArchiveResult, ScenarioInput
 from horizon90.service import HorizonService
-from horizon90.storage import ReplayStorage
+from horizon90.storage import LocalReplayStorage
 from horizon90.tidb import TiDBRepository
 from horizon90.openai_client import OpenAIClient
 
@@ -48,24 +48,21 @@ class UnavailableLLM:
 
 class UnavailableStorage:
     def write(self, pack: Any) -> ArchiveResult:
-        return ArchiveResult(status="not_archived", message="S3 não configurado")
+        return ArchiveResult(status="not_archived", message="Registro local indisponível")
 
 
 def default_service() -> HorizonService:
+    storage: Any = LocalReplayStorage.default()
     try:
         settings = Settings.from_env()
     except ValueError:
-        return HorizonService(UnavailableRepository(), UnavailableLLM(), UnavailableStorage())
+        return HorizonService(UnavailableRepository(), UnavailableLLM(), storage)
 
     repository = TiDBRepository(settings)
     try:
         llm: Any = OpenAIClient.from_env()
     except ValueError:
         llm = UnavailableLLM()
-    try:
-        storage: Any = ReplayStorage.from_settings(settings)
-    except Exception:
-        storage = UnavailableStorage()
     return HorizonService(repository, llm, storage)
 
 
@@ -79,6 +76,10 @@ def create_app(service: HorizonService | Any | None = None) -> FastAPI:
         return JSONResponse(status_code=422, content={"status": "invalid", "message": str(error)})
 
     @app.get("/", include_in_schema=False)
+    def pitch() -> FileResponse:
+        return FileResponse(STATIC_DIR / "pitch.html")
+
+    @app.get("/console", include_in_schema=False)
     def index() -> FileResponse:
         return FileResponse(STATIC_DIR / "index.html")
 

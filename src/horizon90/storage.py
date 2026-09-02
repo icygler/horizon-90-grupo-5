@@ -1,48 +1,34 @@
-"""Replay archive writer constrained to the Group 5 S3 prefix."""
+"""Local, per-session decision-pack storage for the demo runtime."""
 
 from __future__ import annotations
 
 import json
-from typing import Any
+from pathlib import Path
 
-import boto3
-from botocore.exceptions import ClientError
-
-from horizon90.config import Settings
 from horizon90.models import ArchiveResult, DecisionPack
 
 
-GROUP_FIVE_PREFIX = "latam-hackathon-005"
+class LocalReplayStorage:
+    """Write reviewable packs locally; no AWS service is implied or required."""
 
-
-class ReplayStorage:
-    def __init__(self, client: Any, bucket: str, prefix: str):
-        normalized_prefix = prefix.strip("/")
-        if normalized_prefix != GROUP_FIVE_PREFIX:
-            raise ValueError("O replay só pode usar o prefixo reservado ao Grupo 5.")
-        self.client = client
-        self.bucket = bucket
-        self.prefix = normalized_prefix
+    def __init__(self, directory: Path):
+        self.directory = directory
 
     @classmethod
-    def from_settings(cls, settings: Settings) -> "ReplayStorage":
-        client = boto3.client("s3", region_name="sa-east-1")
-        return cls(client, settings.s3_bucket, settings.s3_prefix)
+    def default(cls) -> "LocalReplayStorage":
+        project_root = Path(__file__).resolve().parents[2]
+        return cls(project_root / "tmp" / "replays")
 
     def write(self, pack: DecisionPack) -> ArchiveResult:
         return self.write_json(pack.decision_id, pack.model_dump())
 
-    def write_json(self, replay_id: str, payload: dict[str, object]) -> ArchiveResult:
-        key = f"{self.prefix}/replays/{replay_id}.json"
+    def write_json(self, record_id: str, payload: dict[str, object]) -> ArchiveResult:
         try:
-            self.client.put_object(
-                Bucket=self.bucket,
-                Key=key,
-                Body=json.dumps(payload, ensure_ascii=False, indent=2, default=str),
-                ContentType="application/json",
+            self.directory.mkdir(parents=True, exist_ok=True)
+            filename = f"{record_id}.json"
+            (self.directory / filename).write_text(
+                json.dumps(payload, ensure_ascii=False, indent=2, default=str), encoding="utf-8"
             )
-            return ArchiveResult(status="archived", s3_key=key)
-        except ClientError as error:
-            return ArchiveResult(status="not_archived", message=error.response["Error"].get("Code", "S3Error"))
-        except Exception:
-            return ArchiveResult(status="not_archived", message="S3 indisponível")
+            return ArchiveResult(status="archived", archive_key=f"local:{filename}")
+        except OSError:
+            return ArchiveResult(status="not_archived", message="Registro local indisponível")

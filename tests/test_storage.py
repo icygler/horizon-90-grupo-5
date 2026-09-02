@@ -1,15 +1,5 @@
 from horizon90.models import DecisionPack
-from horizon90.storage import ReplayStorage
-
-
-class FakeS3:
-    def __init__(self):
-        self.key = ""
-        self.payload = ""
-
-    def put_object(self, **kwargs):
-        self.key = kwargs["Key"]
-        self.payload = kwargs["Body"]
+from horizon90.storage import LocalReplayStorage
 
 
 def decision_pack():
@@ -24,18 +14,16 @@ def decision_pack():
     )
 
 
-def test_storage_uses_only_group_five_prefix():
-    client = FakeS3()
-    result = ReplayStorage(client, "bucket", "latam-hackathon-005").write(decision_pack())
+def test_local_storage_writes_the_decision_pack_to_the_session_directory(tmp_path):
+    result = LocalReplayStorage(tmp_path).write(decision_pack())
 
     assert result.status == "archived"
-    assert client.key == "latam-hackathon-005/replays/demo-001.json"
+    assert result.archive_key == "local:demo-001.json"
+    assert (tmp_path / "demo-001.json").exists()
 
 
-def test_storage_rejects_another_team_prefix():
-    try:
-        ReplayStorage(FakeS3(), "bucket", "latam-hackathon-004")
-    except ValueError as error:
-        assert "Grupo 5" in str(error)
-    else:
-        raise AssertionError("O prefixo de outro time deve ser rejeitado.")
+def test_local_storage_writes_a_preflight_record(tmp_path):
+    result = LocalReplayStorage(tmp_path).write_json("preflight", {"check": "ok"})
+
+    assert result.status == "archived"
+    assert (tmp_path / "preflight.json").exists()

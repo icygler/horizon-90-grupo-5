@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Horizon 90 — apresentação do ensaio de decisão aeroportuária.">
+    <title>Horizon 90 · Apresentação</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body class="pitch-page">
+    <header class="pitch-nav">
+      <a class="brand" href="/" aria-label="Horizon 90, apresentação"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>Horizon <strong>90</strong></span></a>
+      <span class="pitch-nav-label">GRUPO 5 · HACKATHON LATAM</span>
+      <a class="pitch-console-link" href="/console">Abrir simulação <i aria-hidden="true">→</i></a>
+    </header>
+    <main class="pitch-shell">
+      <section class="pitch-hero" aria-labelledby="pitch-title">
+        <div class="pitch-hero-copy"><span class="section-kicker">DECISÃO SOB PRESSÃO</span><h1 id="pitch-title">Quando a capacidade cai, a decisão precisa ganhar tempo.</h1><p>Um ensaio com IA generativa que transforma um recorte histórico do aeroporto em uma resposta operacional clara, discutível e humana.</p><a class="pitch-cta" href="/console">Ver o console operacional <i aria-hidden="true">→</i></a></div>
+        <aside class="scenario-card" aria-label="Cenário demonstrado"><span>CENÁRIO DEMONSTRADO</span><strong>GRU</strong><dl><div><dt>Capacidade indisponível</dt><dd>30%</dd></div><div><dt>Janela crítica</dt><dd>90 min</dd></div><div><dt>Referência</dt><dd>04 JUN 2015 · 15:00</dd></div></dl><p>Simulação histórica. Sem alteração em voos, passageiros ou operação real.</p></aside>
+      </section>
+      <section class="pitch-thesis" aria-labelledby="thesis-title"><span class="section-kicker">O PROBLEMA</span><h2 id="thesis-title">Em uma restrição operacional, a informação existe — mas o tempo para reunir, comparar e decidir desaparece.</h2><div class="thesis-grid"><p>Operações, gestão aeroportuária e atendimento enxergam riscos diferentes. Horizon 90 cria uma mesma mesa de decisão antes que a pressão se espalhe.</p><ol><li><span>01</span><div><strong>Dimensionar</strong><small>Voos, reservas e capacidade expostos.</small></div></li><li><span>02</span><div><strong>Confrontar</strong><small>Estratégias e objeções de cada papel.</small></div></li><li><span>03</span><div><strong>Coordenar</strong><small>Próximos passos, responsáveis e reavaliação.</small></div></li></ol></div></section>
+      <section class="pitch-flow" aria-labelledby="flow-title"><div><span class="section-kicker">A ARQUITETURA</span><h2 id="flow-title">Dados confiáveis entram. Decisão humana sai.</h2></div><div class="architecture-line"><article><small>01 · DADOS</small><strong>airportdb</strong><p>Recorte histórico e agregados.</p></article><i aria-hidden="true">→</i><article><small>02 · CONTEXTO</small><strong>TiDB + Vector</strong><p>Exposição e evidências semânticas.</p></article><i aria-hidden="true">→</i><article><small>03 · DELIBERAÇÃO</small><strong>OpenAI · GPT-5.6 Luna</strong><p>Rodada multiagente estruturada.</p></article><i aria-hidden="true">→</i><article><small>04 · OPERAÇÃO</small><strong>Validação humana</strong><p>Folha de resposta e pontos de revisão.</p></article></div><p class="architecture-note">Execução local · TiDB Cloud · OpenAI Responses · registro local do pacote</p></section>
+      <section class="pitch-value" aria-labelledby="value-title"><div><span class="section-kicker">O QUE O OPERADOR RECEBE</span><h2 id="value-title">Uma resposta para os próximos minutos — não um texto genérico.</h2></div><div class="value-grid"><article><span>AGORA</span><strong>Iniciar coordenação</strong><p>Qual informação confirmar, com quem e qual sinal comprova que a situação está sob controle.</p></article><article><span>15–30 MIN</span><strong>Proteger o que importa</strong><p>Como equilibrar conexões, pontualidade e atendimento com trade-offs explícitos.</p></article><article><span>REAVALIAR</span><strong>Escalar ou encerrar</strong><p>Quando revisar a hipótese, quais impactos observar e quem valida o próximo movimento.</p></article></div></section>
+      <section class="pitch-team" aria-labelledby="team-title"><div><span class="section-kicker">GRUPO 5</span><h2 id="team-title">Construído para tornar a decisão operacional mais legível sob pressão.</h2></div><ul><li>Israel Cygler</li><li>Gustavo Tinoco</li><li>Wesley Ribeiro</li><li>Rafaeli Gil</li></ul><a class="pitch-cta dark" href="/console">Entrar no cenário simulado <i aria-hidden="true">→</i></a></section>
+    </main>
+    <footer class="pitch-footer"><span>Horizon 90</span> · Ensaio multiagente inspirado no MiroFish · Grupo 5</footer>
+  </body>
+</html>

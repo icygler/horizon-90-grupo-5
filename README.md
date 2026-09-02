@@ -21,7 +21,7 @@ python -m pytest -v
 python -m uvicorn horizon90.main:app --app-dir src --host 127.0.0.1 --port 8000
 ```
 
-Abra `http://127.0.0.1:8000`. Sem `.env`, a demonstração continua disponível com dados locais e estados honestos de fallback/indisponível.
+Abra `http://127.0.0.1:8000` para a capa do pitch e `http://127.0.0.1:8000/console` para o painel operacional. Sem `.env`, a demonstração continua disponível com dados locais e estados honestos de fallback/indisponível.
 
 ## Configuração ao vivo
 
@@ -30,7 +30,7 @@ Copie `.env.example` para `.env` e preencha apenas localmente, sem versionar:
 - `TIDB_HOST`, `TIDB_USER`, `TIDB_PASSWORD`, `TIDB_DATABASE`
 - `OPENAI_API_KEY` (GPT-5.6 Luna via Responses API)
 
-Nesta entrega, a aplicação é executada localmente. O TiDB Cloud é o banco gerenciado usado pela aplicação; OpenAI Responses é o provedor de IA generativa. Amazon Bedrock, EC2 e o replay S3 não são requisitos da demonstração entregue e não devem ser apresentados como integrações ativas.
+Nesta entrega, a aplicação é executada localmente. O TiDB Cloud é o banco gerenciado usado pela aplicação; OpenAI Responses é o provedor de IA generativa. Os pacotes de decisão são registrados localmente em `tmp/replays/`. Amazon Bedrock, EC2 e o replay S3 não são requisitos da demonstração entregue e não devem ser apresentados como integrações ativas.
 
 ```bash
 python scripts/import_airportdb.py

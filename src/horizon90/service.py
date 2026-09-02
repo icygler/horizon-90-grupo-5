@@ -18,7 +18,7 @@ class HorizonService:
         self._runs: dict[str, RunResult] = {}
 
     def run(self, contract: ScenarioContract) -> RunResult:
-        status = IntegrationStatus(tidb="real", vector="real", llm="real", s3="unavailable")
+        status = IntegrationStatus(tidb="real", vector="real", llm="real", archive="real")
         try:
             exposure = self.repository.fetch_exposure(contract)
             evidence = self.repository.find_evidence(self._evidence_query(contract), limit=3)
@@ -64,11 +64,11 @@ class HorizonService:
             self.llm,
         )
         archive = self.storage.write(pack)
-        s3_status = "real" if archive.status == "archived" else "unavailable"
+        archive_status = "real" if archive.status == "archived" else "unavailable"
         self._runs[run_id] = run.model_copy(
-            update={"integration_status": run.integration_status.model_copy(update={"s3": s3_status})}
+            update={"integration_status": run.integration_status.model_copy(update={"archive": archive_status})}
         )
-        return pack.model_copy(update={"archive_status": archive.status, "archive_key": archive.s3_key})
+        return pack.model_copy(update={"archive_status": archive.status, "archive_key": archive.archive_key})
 
     @staticmethod
     def _evidence_query(contract: ScenarioContract) -> str:

@@ -31,8 +31,24 @@ DECISION_SCHEMA = {
         "evidence_ids": {"type": "array", "items": {"type": "integer"}},
         "assumptions": {"type": "array", "items": {"type": "string"}},
         "human_validation_questions": {"type": "array", "items": {"type": "string"}},
+        "action_plan": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "time_window": {"type": "string", "enum": ["agora", "15_min", "30_min", "fim_da_janela"]},
+                    "owner": {"type": "string"},
+                    "action": {"type": "string"},
+                    "success_signal": {"type": "string"},
+                },
+                "required": ["time_window", "owner", "action", "success_signal"],
+                "additionalProperties": False,
+            },
+        },
+        "impact_watch": {"type": "array", "items": {"type": "string"}},
+        "next_review_minutes": {"type": "integer", "minimum": 5, "maximum": 60},
     },
-    "required": ["recommended_action", "tradeoffs", "evidence_ids", "assumptions", "human_validation_questions"],
+    "required": ["recommended_action", "tradeoffs", "evidence_ids", "assumptions", "human_validation_questions", "action_plan", "impact_watch", "next_review_minutes"],
     "additionalProperties": False,
 }
 

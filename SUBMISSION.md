@@ -23,10 +23,11 @@ O cenário demonstrável é: **GRU, 04/06/2015 às 15:00, 90 minutos, 30% de cap
 - [x] Busca vetorial no TiDB com `VECTOR(1024)` e `EMBED_TEXT`
 - [x] OpenAI Responses com GPT-5.6 Luna para a rodada multiagente e o pacote de decisão
 - [x] Execução local da aplicação FastAPI em `http://127.0.0.1:8000`
+- [x] Registro local de pacotes de decisão em `tmp/replays/`
 - [x] Especificações do Kiro em `.kiro/` versionadas
 - [ ] Amazon Bedrock — não utilizado nesta entrega
 - [ ] Deploy público na AWS/EC2 — não realizado; a demonstração é local
-- [ ] Arquivamento de replay no S3 — integração aparece com estado explícito de indisponível quando não está configurada
+- [ ] Arquivamento de replay no S3 — não utilizado nesta entrega
 
 ## Arquitetura entregue
 
@@ -34,7 +35,7 @@ O cenário demonstrável é: **GRU, 04/06/2015 às 15:00, 90 minutos, 30% de cap
 2. O TiDB consulta somente agregados do `airportdb` para calcular exposição de voos, reservas e capacidade.
 3. O TiDB Vector recupera evidências semânticas para contextualizar a rodada.
 4. O GPT-5.6 Luna gera quatro perspectivas operacionais e, após uma escolha humana de estratégia, um pacote de decisão estruturado.
-5. A interface mostra origem dos dados, estados das integrações, evidências, trade-offs e perguntas de validação humana.
+5. A interface mostra origem dos dados, estados das integrações, evidências, trade-offs, ações temporais, responsáveis sugeridos, impacto a acompanhar e perguntas de validação humana.
 
 ## Onde olhar no código
 
@@ -68,7 +69,7 @@ Para o caminho ao vivo, configure `TIDB_HOST`, `TIDB_USER`, `TIDB_PASSWORD`, `TI
 3. Execute o cenário-semente e mostre a exposição agregada e as evidências do TiDB/TiDB Vector.
 4. Compare as três opções de resposta e as quatro perspectivas operacionais geradas pela IA.
 5. Selecione uma estratégia e gere o pacote revisável de decisão.
-6. Mostre a área de rastreabilidade: TiDB, Vector e OpenAI ficam identificados; Bedrock, deploy AWS e S3 não são alegados como entregues.
+6. Mostre a área de rastreabilidade: TiDB, Vector, OpenAI e o registro local ficam identificados; Bedrock, deploy AWS e S3 não são alegados como entregues.
 
 ## Limites e proteção de dados
 

@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 from uuid import uuid4
 
-from horizon90.models import AgentReaction, DecisionPack, Evidence, ExposureSummary, ScenarioContract
+from horizon90.models import AgentReaction, DecisionPack, Evidence, ExposureSummary, OperationalAction, ScenarioContract
 from horizon90.openai_client import LUNA_ID
 from horizon90.seed import ACTORS, FIXED_STRATEGIES, ActorDefinition
 
@@ -47,6 +47,9 @@ def build_decision_pack(
             evidence_ids=[int(item) for item in payload["evidence_ids"]],
             assumptions=[str(item) for item in payload["assumptions"]],
             human_validation_questions=[str(item) for item in payload["human_validation_questions"]],
+            action_plan=[OperationalAction.model_validate(item) for item in payload["action_plan"]],
+            impact_watch=[str(item) for item in payload["impact_watch"]],
+            next_review_minutes=int(payload["next_review_minutes"]),
         )
     except Exception:
         return DecisionPack(
@@ -57,6 +60,9 @@ def build_decision_pack(
             evidence_ids=[item.evidence_id for item in evidence if item.evidence_id is not None],
             assumptions=contract.assumptions,
             human_validation_questions=[item.validation_question for item in reactions],
+            action_plan=_fallback_action_plan(),
+            impact_watch=["conexões", "pontualidade", "atendimento"],
+            next_review_minutes=15,
         )
 
 
@@ -128,7 +134,39 @@ Estratégia selecionada: {selected_strategy_id}. Exposição agregada: {exposure
 IDs de evidência disponíveis: {evidence_text}.
 Reações da rodada única:\n{reaction_text}
 
-Devolva somente JSON com recommended_action, tradeoffs, evidence_ids, assumptions e
-human_validation_questions. Não afirme que um voo foi realmente cancelado, atrasado ou
-remarcado. Exija validação humana antes de qualquer ação.
+ Devolva somente JSON com recommended_action, tradeoffs, evidence_ids, assumptions,
+ human_validation_questions, action_plan, impact_watch e next_review_minutes.
+ action_plan deve ter até quatro itens, um para cada time_window: agora, 15_min, 30_min
+ e fim_da_janela. Cada item deve indicar owner, ação sugerida e signal de sucesso.
+ Não afirme que um voo foi realmente cancelado, atrasado ou remarcado. Exija validação
+ humana antes de qualquer ação.
 """
+
+
+def _fallback_action_plan() -> list[OperationalAction]:
+    return [
+        OperationalAction(
+            time_window="agora",
+            owner="Gestão aeroportuária",
+            action="Confirmar a capacidade disponível e abrir a coordenação entre aeroporto, companhia e atendimento.",
+            success_signal="Capacidade, responsáveis e canal de coordenação confirmados.",
+        ),
+        OperationalAction(
+            time_window="15_min",
+            owner="Operações da companhia",
+            action="Validar a estratégia selecionada contra as conexões e a malha expostas.",
+            success_signal="Prioridades revisadas pela operação da companhia.",
+        ),
+        OperationalAction(
+            time_window="30_min",
+            owner="Atendimento ao passageiro",
+            action="Preparar comunicação e contingência somente após a validação humana.",
+            success_signal="Mensagem e canais de atendimento prontos para aprovação.",
+        ),
+        OperationalAction(
+            time_window="fim_da_janela",
+            owner="Gestão aeroportuária",
+            action="Reavaliar a exposição e decidir se a coordenação pode ser encerrada ou escalada.",
+            success_signal="Registro de reavaliação concluído pela equipe humana.",
+        ),
+    ]

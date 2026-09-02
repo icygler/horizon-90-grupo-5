@@ -73,7 +73,14 @@ class IntegrationStatus(BaseModel):
     tidb: Literal["real", "fallback", "unavailable"]
     vector: Literal["real", "fallback", "unavailable"]
     llm: Literal["real", "fallback", "unavailable"]
-    s3: Literal["real", "fallback", "unavailable"]
+    archive: Literal["real", "fallback", "unavailable"]
+
+
+class OperationalAction(BaseModel):
+    time_window: Literal["agora", "15_min", "30_min", "fim_da_janela"]
+    owner: str
+    action: str
+    success_signal: str
 
 
 class DecisionPack(BaseModel):
@@ -84,13 +91,16 @@ class DecisionPack(BaseModel):
     evidence_ids: list[int]
     assumptions: list[str]
     human_validation_questions: list[str]
+    action_plan: list[OperationalAction] = Field(default_factory=list)
+    impact_watch: list[str] = Field(default_factory=list)
+    next_review_minutes: int = Field(default=15, ge=5, le=60)
     archive_status: Literal["archived", "not_archived", "not_requested"] = "not_requested"
     archive_key: str | None = None
 
 
 class ArchiveResult(BaseModel):
     status: Literal["archived", "not_archived"]
-    s3_key: str | None = None
+    archive_key: str | None = None
     message: str | None = None
 
 

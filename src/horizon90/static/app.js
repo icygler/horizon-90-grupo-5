@@ -10,6 +10,7 @@ let activeRun = null;
 let selectedStrategy = null;
 
 const labels = { real: 'verificado', fallback: 'alternativo', unavailable: 'indisponível' };
+const actionWindowLabels = { agora: 'Agora', '15_min': 'Próximos 15 min', '30_min': 'Até 30 min', fim_da_janela: 'Fim da janela' };
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[character]);
@@ -68,7 +69,7 @@ function renderStatus(status) {
     const item = document.querySelector(`[data-key="${key}"]`);
     if (!item) return;
     item.dataset.status = value;
-    item.querySelector('b').textContent = labels[value] || value;
+    item.querySelector('b').textContent = key === 'archive' && value === 'real' ? 'pronto' : (labels[value] || value);
   });
 }
 
@@ -99,7 +100,7 @@ function renderStrategies(strategies) {
       decisionButton.disabled = false;
       document.querySelector('#strategy-state').textContent = 'Estratégia selecionada';
       document.querySelector('#decision-state').textContent = 'Pronto para gerar';
-      document.querySelector('#decision-content').textContent = `Estratégia selecionada: ${strategy.title}. Gere o pacote para revisar trade-offs e validações humanas.`;
+      document.querySelector('#decision-content').textContent = `Estratégia selecionada: ${strategy.title}. Gere a folha de resposta para revisar próximos passos, trade-offs e validações humanas.`;
       setWorkflow('decide');
     });
     list.appendChild(button);
@@ -131,7 +132,12 @@ function renderEvidence(evidence) {
 
 function renderDecision(pack) {
   const content = document.querySelector('#decision-content');
-  content.innerHTML = `<strong>${escapeHtml(pack.recommended_action)}</strong><p>${pack.tradeoffs.map(escapeHtml).join(' ')}</p><p class="archive">Registro: ${pack.archive_status === 'archived' ? escapeHtml(pack.archive_key) : 'não arquivado'}</p><p class="validation-label">Validação humana necessária</p><ul>${pack.human_validation_questions.map((question) => `<li>${escapeHtml(question)}</li>`).join('')}</ul>`;
+  const actions = (pack.action_plan || []).map((item) => `<li><span>${escapeHtml(actionWindowLabels[item.time_window] || item.time_window)}</span><div><strong>${escapeHtml(item.owner)}</strong><p>${escapeHtml(item.action)}</p><small>Sinal de avanço: ${escapeHtml(item.success_signal)}</small></div></li>`).join('');
+  const impacts = (pack.impact_watch || []).map((impact) => `<span>${escapeHtml(impact)}</span>`).join('');
+  const archive = pack.archive_status === 'archived'
+    ? `Registro local salvo nesta máquina: ${escapeHtml(pack.archive_key || 'arquivo disponível')}.`
+    : 'Registro local não pôde ser gravado nesta execução.';
+  content.innerHTML = `<div class="decision-recommendation"><strong>${escapeHtml(pack.recommended_action)}</strong><p>${pack.tradeoffs.map(escapeHtml).join(' ')}</p></div><div class="review-gate"><span>PRÓXIMA REAVALIAÇÃO</span><strong>em ${escapeHtml(pack.next_review_minutes)} min</strong></div><section class="action-plan"><h4>Próximas ações sugeridas</h4><ol>${actions || '<li class="empty">O plano temporal não está disponível.</li>'}</ol></section><section class="impact-watch"><h4>Impactos a acompanhar</h4><div>${impacts || '<span>Revisar impactos com a equipe</span>'}</div></section><p class="archive">${archive}</p><p class="validation-label">Validação humana necessária</p><ul class="validation-list">${pack.human_validation_questions.map((question) => `<li>${escapeHtml(question)}</li>`).join('')}</ul>`;
   document.querySelector('#decision-state').textContent = 'Pacote gerado';
 }
 
@@ -184,20 +190,20 @@ async function runScenario(event) {
 async function createDecision() {
   if (!activeRun || !selectedStrategy) return;
   decisionButton.disabled = true;
-  decisionButton.querySelector('span').textContent = 'Gerando pacote';
+  decisionButton.querySelector('span').textContent = 'Gerando folha';
   document.querySelector('#decision-state').textContent = 'Organizando recomendação';
   try {
     const response = await fetch(`/api/runs/${activeRun}/decision`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ strategy_id: selectedStrategy }) });
     const payload = await response.json();
-    if (!response.ok) throw new Error(payload.detail?.message || 'Não foi possível gerar o pacote de decisão.');
+    if (!response.ok) throw new Error(payload.detail?.message || 'Não foi possível gerar a folha de resposta.');
     renderDecision(payload);
-    setMessage('Pacote de decisão gerado para revisão humana.', 'success');
+    setMessage('Folha de resposta gerada para revisão humana.', 'success');
   } catch (error) {
     document.querySelector('#decision-content').textContent = error.message;
     document.querySelector('#decision-state').textContent = 'Tentar novamente';
   } finally {
     decisionButton.disabled = false;
-    decisionButton.querySelector('span').textContent = 'Gerar pacote revisável';
+    decisionButton.querySelector('span').textContent = 'Gerar folha de resposta';
   }
 }
 

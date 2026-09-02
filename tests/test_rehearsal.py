@@ -20,6 +20,16 @@ class FakeBedrock:
                 "evidence_ids": [1],
                 "assumptions": ["Sem status operacional ao vivo."],
                 "human_validation_questions": ["Qual é a capacidade confirmada?"],
+                "action_plan": [
+                    {
+                        "time_window": "agora",
+                        "owner": "Gestão aeroportuária",
+                        "action": "Confirmar capacidade disponível e abrir coordenação conjunta.",
+                        "success_signal": "Capacidade e canal de coordenação confirmados.",
+                    }
+                ],
+                "impact_watch": ["conexões", "pontualidade", "atendimento"],
+                "next_review_minutes": 15,
             }
         return {
             "likely_reaction": "Solicita confirmação antes de agir.",
@@ -100,3 +110,18 @@ def test_decision_pack_uses_luna_only_after_strategy_selection():
 
     assert pack.selected_strategy_id == "PROTEGER_CONEXOES"
     assert bedrock.model_ids[-1] == LUNA_ID
+
+
+def test_decision_pack_returns_timed_actions_and_a_review_gate():
+    pack = build_decision_pack(
+        seeded_contract(),
+        seeded_exposure(),
+        seeded_evidence(),
+        run_rehearsal(seeded_contract(), seeded_exposure(), seeded_evidence(), FakeBedrock()),
+        "PROTEGER_CONEXOES",
+        FakeBedrock(),
+    )
+
+    assert pack.next_review_minutes == 15
+    assert pack.action_plan[0].time_window == "agora"
+    assert "conexões" in pack.impact_watch

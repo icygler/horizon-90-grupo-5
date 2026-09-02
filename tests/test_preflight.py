@@ -28,4 +28,4 @@ def test_preflight_reports_each_dependency_without_stopping():
         storage=FakeStorage(),
     )
 
-    assert result == {"tidb": "ok", "vector": "ok", "llm": "ok", "s3": "ok"}
+    assert result == {"tidb": "ok", "vector": "ok", "llm": "ok", "archive": "ok"}
