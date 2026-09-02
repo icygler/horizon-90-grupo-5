@@ -46,3 +46,18 @@ FIXED_STRATEGIES = [
         tradeoff="Não elimina a limitação física de capacidade do cenário.",
     ),
 ]
+
+
+@dataclass(frozen=True)
+class ActorDefinition:
+    actor_id: str
+    label: str
+    concern: str
+
+
+ACTORS = [
+    ActorDefinition("airline_ops", "Operações da companhia", "proteger a malha e limitar propagação"),
+    ActorDefinition("airport_duty_manager", "Gestão aeroportuária", "preservar segurança e capacidade"),
+    ActorDefinition("short_connection_passenger", "Passageiro com conexão curta", "evitar perda de conexão e falta de informação"),
+    ActorDefinition("customer_service", "Atendimento ao cliente", "manter comunicação viável e consistente"),
+]
