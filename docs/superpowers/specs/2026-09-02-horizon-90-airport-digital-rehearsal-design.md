@@ -1,4 +1,8 @@
-# Horizon 90: Airport Digital Rehearsal - Design
+# Histórico — plano inicial do Horizon 90
+
+> Este documento registra uma proposta inicial com Bedrock, S3 e EC2. Ela foi **substituída** pela implementação local com TiDB, TiDB Vector, OpenAI Responses/GPT-5.6 Luna e registro local. Para avaliação, consulte [README](../../../README.md), [EVALUATION](../../../EVALUATION.md), [SUBMISSION](../../../SUBMISSION.md) e [`.kiro/specs/horizon-90/`](../../../.kiro/specs/horizon-90/).
+
+# Horizon 90: Airport Digital Rehearsal - Design (histórico)
 
 ## Status
 

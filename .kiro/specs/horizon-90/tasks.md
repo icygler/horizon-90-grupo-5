@@ -1,10 +1,12 @@
-# Horizon 90 — Delivery checklist
+# Horizon 90 — Checklist de entrega
 
-- [x] Define validated scenario and integration contracts.
-- [x] Add TiDB aggregate and vector evidence layer.
-- [x] Add Bedrock parser and four-role rehearsal.
-- [x] Add Group 5 S3 replay boundary and status orchestration.
-- [x] Add static FastAPI console and API tests.
-- [ ] Verify TiDB, vector, Bedrock and S3 with Group 5 credentials.
-- [ ] Deploy to Group 5 EC2 and add the public URL below.
-- [ ] Mark only verified stack claims in `SUBMISSION.md`.
+- [x] Importar e consultar agregados do `airportdb` no TiDB Cloud.
+- [x] Criar evidências semânticas com TiDB Vector.
+- [x] Integrar OpenAI Responses / GPT-5.6 Luna para rodada e folha de resposta.
+- [x] Implementar quatro perspectivas inspiradas no MiroFish.
+- [x] Implementar ações por tempo, donos sugeridos, sinais de avanço e reavaliação.
+- [x] Registrar pacotes em arquivo local.
+- [x] Criar capa de pitch e console operacional responsivo.
+- [x] Criar testes de API, contratos, storage e preflight.
+- [x] Documentar execução, equipe, stack real e limites em `README.md`, `EVALUATION.md` e `SUBMISSION.md`.
+- [ ] Configurar credenciais locais antes de uma demonstração ao vivo com TiDB e OpenAI.

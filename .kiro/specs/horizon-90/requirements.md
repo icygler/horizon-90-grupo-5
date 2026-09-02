@@ -1,15 +1,21 @@
-# Horizon 90 — Requirements
+# Horizon 90 — Requisitos entregues
 
-## Objective
+## Objetivo
 
-Create a public, lightweight airport decision rehearsal for Group 5 that demonstrates TiDB Cloud, TiDB Vector, Amazon Bedrock, Amazon S3 and EC2.
+Facilitar a decisão humana quando a capacidade operacional de um aeroporto é reduzida por um período definido.
 
-## Acceptance criteria
+## Critérios de aceitação
 
-- The scenario is visibly labelled simulated and requires confirmation.
-- Airport exposure uses aggregates only; no passenger or employee data is queried, prompted or returned.
-- TiDB stores curated evidence with a generated `VECTOR(1024)` embedding and searches it semantically.
-- The app rehearses exactly four fixed roles for one round, inspired by MiroFish without claiming a MiroFish integration.
-- A decision pack is generated only after selection of one of three fixed strategies.
-- TiDB, vector, Bedrock and S3 state is shown honestly as real, fallback or unavailable.
-- S3 writes remain under `latam-hackathon-005/`.
+- O cenário é visivelmente histórico e simulado, e exige confirmação.
+- O operador altera aeroporto, recorte histórico, janela de impacto e capacidade indisponível.
+- A exposição usa somente agregados; nenhum dado pessoal é consultado ou enviado ao modelo.
+- TiDB Vector recupera evidências semânticas para a rodada.
+- A aplicação compara três estratégias através de quatro papéis fixos inspirados no MiroFish, sem alegar integração do runtime MiroFish.
+- A folha de resposta só é gerada após a escolha humana de uma estratégia.
+- A folha contém ações temporais, responsável sugerido, sinal de avanço, impactos e próxima reavaliação.
+- O pacote é registrado localmente e os estados das integrações são explícitos.
+- A capa de pitch apresenta ideia, arquitetura, cenário, valor e integrantes antes do console.
+
+## Fora de escopo
+
+Amazon Bedrock, S3, EC2/AWS público, rebooking, cancelamento, previsão ao vivo e qualquer execução automática na operação.

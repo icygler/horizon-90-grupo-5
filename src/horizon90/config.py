@@ -13,9 +13,6 @@ class Settings:
     tidb_user: str
     tidb_password: str
     tidb_database: str
-    aws_region: str
-    s3_bucket: str
-    s3_prefix: str
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -30,7 +27,4 @@ class Settings:
             tidb_user=os.environ["TIDB_USER"],
             tidb_password=os.environ["TIDB_PASSWORD"],
             tidb_database=os.environ["TIDB_DATABASE"],
-            aws_region=os.getenv("AWS_REGION", "ap-southeast-1"),
-            s3_bucket=os.getenv("S3_BUCKET", "tidb-latam-hackathon-2026-048364544505"),
-            s3_prefix=os.getenv("S3_PREFIX", "latam-hackathon-005"),
         )

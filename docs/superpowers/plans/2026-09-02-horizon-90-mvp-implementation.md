@@ -1,4 +1,8 @@
-# Horizon 90 MVP Implementation Plan
+# Histórico — plano inicial do Horizon 90
+
+> Este plano contém o desenho exploratório de Bedrock, S3 e EC2, que não foi a entrega final. A implementação avaliada usa execução local, TiDB, TiDB Vector, OpenAI Responses/GPT-5.6 Luna e arquivo local. Consulte [README](../../../README.md), [EVALUATION](../../../EVALUATION.md), [SUBMISSION](../../../SUBMISSION.md) e [`.kiro/specs/horizon-90/`](../../../.kiro/specs/horizon-90/).
+
+# Horizon 90 MVP Implementation Plan (histórico)
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
