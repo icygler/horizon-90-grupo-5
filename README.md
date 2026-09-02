@@ -30,7 +30,7 @@ Copie `.env.example` para `.env` e preencha apenas localmente, sem versionar:
 - `TIDB_HOST`, `TIDB_USER`, `TIDB_PASSWORD`, `TIDB_DATABASE`
 - `OPENAI_API_KEY` (GPT-5.6 Luna via Responses API)
 
-O S3 já usa o bucket do evento e o prefixo reservado ao Grupo 5. Crie o cluster TiDB Cloud Starter em AWS São Paulo e carregue o `airportdb` antes do preflight.
+Nesta entrega, a aplicação é executada localmente. O TiDB Cloud é o banco gerenciado usado pela aplicação; OpenAI Responses é o provedor de IA generativa. Amazon Bedrock, EC2 e o replay S3 não são requisitos da demonstração entregue e não devem ser apresentados como integrações ativas.
 
 ```bash
 python scripts/import_airportdb.py
@@ -49,16 +49,11 @@ python scripts/import_airportdb.py
 
 Depois de importar, inicie o app uma vez com o `.env` preenchido. Ele consulta apenas agregados do `airportdb` e mantém os estados das integrações explícitos na tela.
 
-## Deploy no EC2 do evento
+## Escopo de execução desta entrega
 
-No EC2 do Grupo 5, conecte-se por Session Manager, clone o repositório público por HTTPS e mantenha o `.env` somente na instância:
+A demonstração é local, em `http://127.0.0.1:8000`; não há URL pública, deploy em EC2/AWS ou chamada ao Amazon Bedrock nesta versão. Isso é intencionalmente declarado em `SUBMISSION.md` para que a evidência do hackathon corresponda ao estado real do projeto.
 
-```bash
-python3.11 -m pip install -r requirements.txt
-setsid nohup python3.11 -m uvicorn horizon90.main:app --app-dir src --host 0.0.0.0 --port 8000 > app.log 2>&1 < /dev/null &
-```
-
-Execute `python3.11 scripts/preflight.py` antes do demo. Em seguida acesse a porta pública autorizada pelo evento e registre a URL em `SUBMISSION.md`.
+Com o `.env` configurado, use `python scripts/preflight.py` antes da apresentação para verificar as dependências locais. O resultado de cada integração permanece visível na interface como `verificado`, `alternativo` ou `indisponível`.
 
 ## Evidências de hackathon
 
