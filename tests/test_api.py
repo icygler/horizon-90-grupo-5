@@ -59,8 +59,21 @@ def test_seed_endpoint_returns_confirmed_gru_scenario():
 def test_pitch_cover_and_operational_console_have_separate_routes():
     client = TestClient(create_app(FakeService()))
 
-    assert "Horizon 90" in client.get("/").text
+    pitch_cover = client.get("/").text
+
+    assert "Horizon 90" in pitch_cover
+    assert "data-pitch-video" in pitch_cover
     assert "CONTROLES DA SIMULAÇÃO" in client.get("/console").text
+
+
+def test_pitch_video_asset_is_served_as_mp4_media():
+    client = TestClient(create_app(FakeService()))
+
+    response = client.get("/static/horizon90-decision-reel.mp4")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("video/mp4")
+    assert len(response.content) > 1_000_000
 
 
 def test_run_endpoint_requires_complete_confirmed_contract():
