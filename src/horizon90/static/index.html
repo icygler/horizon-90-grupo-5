@@ -3,81 +3,60 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Horizon 90 — ensaio de decisão aeroportuária simulado.">
-    <title>Horizon 90</title>
+    <meta name="description" content="Horizon 90 — ensaio de decisão aeroportuária histórico e simulado.">
+    <title>Horizon 90 · Simulação operacional</title>
     <link rel="stylesheet" href="/static/styles.css">
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="/" aria-label="Horizon 90">Horizon <strong>90</strong></a>
-      <span class="simulated"><i></i>Cenário simulado</span>
+      <a class="brand" href="/" aria-label="Horizon 90, início"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>Horizon <strong>90</strong></span></a>
+      <div class="topbar-context"><span class="eyebrow">CENTRO DE DECISÃO</span><span>Ensaio de capacidade aeroportuária</span></div>
+      <span class="simulation-badge"><i></i> Simulação histórica</span>
     </header>
-    <main class="shell">
-      <aside class="scenario-panel" aria-labelledby="scenario-title">
-        <h1 id="scenario-title">Cenário</h1>
-        <p>Exercício com base histórica. Não representa operação ao vivo.</p>
-        <form id="scenario-form">
-          <label>Aeroporto
-            <input id="airport_iata" name="airport_iata" value="GRU" maxlength="3" required>
-          </label>
-          <label>Início
-            <input id="start_at" name="start_at" type="datetime-local" required>
-          </label>
-          <label>Horizonte
-            <input id="duration_minutes" name="duration_minutes" type="number" value="90" min="30" max="180" required>
-          </label>
-          <label>Redução de capacidade (%)
-            <input id="capacity_reduction_pct" name="capacity_reduction_pct" type="number" value="30" min="10" max="80" required>
-          </label>
-          <label class="confirmation"><input id="confirmed" type="checkbox" checked> Confirmo este cenário simulado</label>
-          <button type="submit" id="run-button">Iniciar ensaio</button>
-        </form>
-        <p id="form-message" class="form-message" aria-live="polite"></p>
-      </aside>
-
-      <section class="console" aria-live="polite">
-        <section class="integration-strip" aria-labelledby="integrations-title">
-          <div class="section-heading"><h2 id="integrations-title">Integrações</h2><span id="run-state">Aguardando cenário</span></div>
-          <div id="integrations" class="integration-list">
-            <span data-key="tidb">TiDB <b>—</b></span><span data-key="vector">Vetores <b>—</b></span><span data-key="llm">OpenAI <b>—</b></span><span data-key="s3">S3 <b>—</b></span>
-          </div>
-        </section>
-
-        <div class="work-grid">
-          <section class="analysis-column">
-            <section class="exposure" aria-labelledby="exposure-title">
-              <div class="section-heading"><h2 id="exposure-title">Exposição agregada</h2><span id="exposure-source">—</span></div>
-              <div class="metrics">
-                <div><strong id="metric-flights">—</strong><span>voos no intervalo</span></div>
-                <div><strong id="metric-bookings">—</strong><span>reservas agregadas</span></div>
-                <div><strong id="metric-capacity">—</strong><span>capacidade agregada</span></div>
-              </div>
-            </section>
-            <section class="strategies" aria-labelledby="strategies-title">
-              <div class="section-heading"><h2 id="strategies-title">Estratégias</h2><span>Escolha uma para gerar o pacote</span></div>
-              <div id="strategy-list" class="strategy-list"><p class="empty">Inicie o ensaio para comparar as três estratégias.</p></div>
-            </section>
-            <section class="evidence" aria-labelledby="evidence-title">
-              <div class="section-heading"><h2 id="evidence-title">Evidências semânticas</h2><span>TiDB Vector</span></div>
-              <ol id="evidence-list"><li>A consulta aparecerá após o ensaio.</li></ol>
-            </section>
-          </section>
-
-          <section class="decision-column">
-            <section class="reactions" aria-labelledby="reactions-title">
-              <div class="section-heading"><h2 id="reactions-title">Reações da rodada</h2><span>4 papéis · 1 rodada</span></div>
-              <div id="reaction-list" class="reaction-list"><p class="empty">As perspectivas aparecem após o ensaio.</p></div>
-            </section>
-            <section class="decision" aria-labelledby="decision-title">
-              <div class="section-heading"><h2 id="decision-title">Pacote de decisão</h2><span>GPT-5.6 Luna após seleção</span></div>
-              <div id="decision-content" class="decision-content">Selecione uma estratégia para criar uma recomendação revisável.</div>
-              <button id="decision-button" disabled>Gerar pacote de decisão</button>
-            </section>
-          </section>
-        </div>
+    <main class="workspace">
+      <section class="workflow" aria-label="Etapas da simulação">
+        <div class="workflow-step active" data-workflow="configure"><span>1</span><div><strong>Configurar</strong><small>Defina o cenário</small></div></div><i aria-hidden="true"></i>
+        <div class="workflow-step" data-workflow="running"><span>2</span><div><strong>Simular</strong><small>Calcule a exposição</small></div></div><i aria-hidden="true"></i>
+        <div class="workflow-step" data-workflow="compare"><span>3</span><div><strong>Comparar</strong><small>Revise as respostas</small></div></div><i aria-hidden="true"></i>
+        <div class="workflow-step" data-workflow="decide"><span>4</span><div><strong>Decidir</strong><small>Gere o pacote revisável</small></div></div>
       </section>
+      <div class="page-grid">
+        <aside class="control-panel" aria-labelledby="scenario-title">
+          <div class="panel-intro"><span class="section-kicker">CONTROLES DA SIMULAÇÃO</span><h1 id="scenario-title">Defina a pressão operacional</h1><p>Altere os parâmetros abaixo e execute novamente para comparar cenários. Nada nesta tela altera a operação real.</p></div>
+          <form id="scenario-form">
+            <fieldset>
+              <legend>Dados de referência</legend>
+              <label for="airport_iata">Aeroporto de referência <span class="field-hint">Código IATA presente na base histórica</span></label>
+              <input id="airport_iata" name="airport_iata" value="GRU" maxlength="3" autocomplete="off" required>
+              <label for="start_at">Início do recorte histórico <span class="field-hint">Momento usado como referência para o ensaio</span></label>
+              <input id="start_at" name="start_at" type="datetime-local" required>
+            </fieldset>
+            <fieldset>
+              <legend>Impacto a simular</legend>
+              <div class="field-row"><div><label for="duration_minutes">Janela de impacto</label><span class="field-hint">Por quanto tempo a limitação permanece</span></div><div class="number-unit"><input id="duration_minutes" name="duration_minutes" type="number" value="90" min="30" max="180" required><span>min</span></div></div>
+              <div class="preset-group" aria-label="Sugestões de janela de impacto"><button type="button" data-duration="30">30 min</button><button type="button" data-duration="60">60 min</button><button type="button" data-duration="90" class="selected">90 min</button><button type="button" data-duration="120">120 min</button></div>
+              <div class="field-row capacity-row"><div><label for="capacity_reduction_pct">Capacidade indisponível</label><span class="field-hint">Parcela de capacidade retirada durante o recorte</span></div><output id="capacity-display" for="capacity_reduction_pct">30%</output></div>
+              <div class="range-control"><input id="capacity_range" type="range" min="10" max="80" step="5" value="30" aria-label="Capacidade indisponível"><input id="capacity_reduction_pct" name="capacity_reduction_pct" type="number" value="30" min="10" max="80" required aria-label="Percentual de capacidade indisponível"><span>%</span></div>
+              <p class="impact-note" id="impact-note">30% representa um cenário de estresse moderado.</p>
+            </fieldset>
+            <label class="confirmation"><input id="confirmed" type="checkbox" checked> <span>Confirmo que este é um exercício histórico e simulado.</span></label>
+            <button type="submit" id="run-button"><span>Executar simulação</span><i aria-hidden="true">→</i></button>
+          </form>
+          <p id="form-message" class="form-message" aria-live="polite">Ajuste os parâmetros e execute quando estiver pronto.</p>
+        </aside>
+        <section class="console" aria-labelledby="results-title" aria-live="polite">
+          <header class="results-header"><div><span class="section-kicker">SAÍDAS DA SIMULAÇÃO</span><h2 id="results-title">Pronto para analisar</h2><p id="results-caption">Execute um cenário para ver a exposição, comparar respostas e preparar uma decisão.</p></div><div class="run-identification"><span>STATUS</span><strong id="run-state">Aguardando cenário</strong></div></header>
+          <section class="result-section exposure" aria-labelledby="exposure-title"><div class="section-heading"><div><span class="section-kicker">IMPACTO ESTIMADO</span><h3 id="exposure-title">Exposição da janela</h3></div><span id="exposure-source" class="source-chip">Sem dados</span></div><p class="section-description">Volume agregado no recorte selecionado. Use estes números para avaliar a dimensão do cenário antes de escolher uma resposta.</p><div class="metrics"><div><strong id="metric-flights">—</strong><span>voos no intervalo</span></div><div><strong id="metric-bookings">—</strong><span>reservas agregadas</span></div><div><strong id="metric-capacity">—</strong><span>assentos de capacidade</span></div></div></section>
+          <section class="result-section strategies" aria-labelledby="strategies-title"><div class="section-heading"><div><span class="section-kicker">OPÇÕES DE RESPOSTA</span><h3 id="strategies-title">Compare antes de escolher</h3></div><span id="strategy-state" class="selection-state">Aguardando simulação</span></div><p class="section-description">Escolha uma estratégia. A escolha não dispara nenhuma ação: ela apenas orienta o pacote de decisão revisável.</p><div id="strategy-list" class="strategy-list"><p class="empty">As opções de resposta serão calculadas após a simulação.</p></div></section>
+          <div class="lower-grid">
+            <section class="result-section reactions" aria-labelledby="reactions-title"><div class="section-heading"><div><span class="section-kicker">PERSPECTIVAS OPERACIONAIS</span><h3 id="reactions-title">Reações da rodada</h3></div><span>4 papéis</span></div><p class="section-description">Visões contrastantes para expor objeções e validações necessárias antes da decisão humana.</p><div id="reaction-list" class="reaction-list"><p class="empty">As perspectivas aparecem após a simulação.</p></div></section>
+            <section class="decision-card" aria-labelledby="decision-title"><div class="section-heading"><div><span class="section-kicker">DECISÃO HUMANA</span><h3 id="decision-title">Pacote de decisão</h3></div><span id="decision-state">Etapa 4</span></div><div id="decision-content" class="decision-content">Selecione uma opção de resposta. Em seguida, gere um pacote para revisão humana.</div><button id="decision-button" disabled><span>Gerar pacote revisável</span><i aria-hidden="true">→</i></button><p class="decision-note">O resultado é uma recomendação para análise, não uma instrução operacional automática.</p></section>
+          </div>
+          <details class="traceability"><summary><span>Rastreabilidade técnica</span><small>Fontes e evidências usadas na simulação</small></summary><div class="trace-content"><div class="integration-list" id="integrations" aria-label="Estado das integrações"><span data-key="tidb"><small>BASE TRANSACIONAL</small>TiDB <b>—</b></span><span data-key="vector"><small>CONTEXTO SEMÂNTICO</small>TiDB Vector <b>—</b></span><span data-key="llm"><small>RODADA MULTIAGENTE</small>OpenAI <b>—</b></span><span data-key="s3"><small>ARQUIVAMENTO</small>S3 <b>—</b></span></div><section class="evidence" aria-labelledby="evidence-title"><div class="section-heading"><h3 id="evidence-title">Evidências de apoio</h3><span>Consulta semântica</span></div><ol id="evidence-list"><li>A evidência usada aparecerá após a simulação.</li></ol></section></div></details>
+        </section>
+      </div>
     </main>
-    <footer>Horizon 90 é um ensaio multiagente inspirado no MiroFish. Não faz previsão ou remarcação real.</footer>
+    <footer><span>Horizon 90</span> · Ensaio multiagente inspirado no MiroFish. Não produz previsão, remarcação ou alteração operacional real.</footer>
     <script src="/static/app.js"></script>
   </body>
 </html>
