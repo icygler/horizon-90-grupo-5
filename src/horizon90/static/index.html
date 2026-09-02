@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Horizon 90 — ensaio de decisão aeroportuária simulado.">
+    <title>Horizon 90</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Horizon 90">Horizon <strong>90</strong></a>
+      <span class="simulated"><i></i>Cenário simulado</span>
+    </header>
+    <main class="shell">
+      <aside class="scenario-panel" aria-labelledby="scenario-title">
+        <h1 id="scenario-title">Cenário</h1>
+        <p>Exercício com base histórica. Não representa operação ao vivo.</p>
+        <form id="scenario-form">
+          <label>Aeroporto
+            <input id="airport_iata" name="airport_iata" value="GRU" maxlength="3" required>
+          </label>
+          <label>Início
+            <input id="start_at" name="start_at" type="datetime-local" required>
+          </label>
+          <label>Horizonte
+            <input id="duration_minutes" name="duration_minutes" type="number" value="90" min="30" max="180" required>
+          </label>
+          <label>Redução de capacidade (%)
+            <input id="capacity_reduction_pct" name="capacity_reduction_pct" type="number" value="30" min="10" max="80" required>
+          </label>
+          <label class="confirmation"><input id="confirmed" type="checkbox" checked> Confirmo este cenário simulado</label>
+          <button type="submit" id="run-button">Iniciar ensaio</button>
+        </form>
+        <p id="form-message" class="form-message" aria-live="polite"></p>
+      </aside>
+
+      <section class="console" aria-live="polite">
+        <section class="integration-strip" aria-labelledby="integrations-title">
+          <div class="section-heading"><h2 id="integrations-title">Integrações</h2><span id="run-state">Aguardando cenário</span></div>
+          <div id="integrations" class="integration-list">
+            <span data-key="tidb">TiDB <b>—</b></span><span data-key="vector">Vetores <b>—</b></span><span data-key="bedrock">Bedrock <b>—</b></span><span data-key="s3">S3 <b>—</b></span>
+          </div>
+        </section>
+
+        <div class="work-grid">
+          <section class="analysis-column">
+            <section class="exposure" aria-labelledby="exposure-title">
+              <div class="section-heading"><h2 id="exposure-title">Exposição agregada</h2><span id="exposure-source">—</span></div>
+              <div class="metrics">
+                <div><strong id="metric-flights">—</strong><span>voos no intervalo</span></div>
+                <div><strong id="metric-bookings">—</strong><span>reservas agregadas</span></div>
+                <div><strong id="metric-capacity">—</strong><span>capacidade agregada</span></div>
+              </div>
+            </section>
+            <section class="strategies" aria-labelledby="strategies-title">
+              <div class="section-heading"><h2 id="strategies-title">Estratégias</h2><span>Escolha uma para gerar o pacote</span></div>
+              <div id="strategy-list" class="strategy-list"><p class="empty">Inicie o ensaio para comparar as três estratégias.</p></div>
+            </section>
+            <section class="evidence" aria-labelledby="evidence-title">
+              <div class="section-heading"><h2 id="evidence-title">Evidências semânticas</h2><span>TiDB Vector</span></div>
+              <ol id="evidence-list"><li>A consulta aparecerá após o ensaio.</li></ol>
+            </section>
+          </section>
+
+          <section class="decision-column">
+            <section class="reactions" aria-labelledby="reactions-title">
+              <div class="section-heading"><h2 id="reactions-title">Reações da rodada</h2><span>4 papéis · 1 rodada</span></div>
+              <div id="reaction-list" class="reaction-list"><p class="empty">As perspectivas aparecem após o ensaio.</p></div>
+            </section>
+            <section class="decision" aria-labelledby="decision-title">
+              <div class="section-heading"><h2 id="decision-title">Pacote de decisão</h2><span>Sonnet após seleção</span></div>
+              <div id="decision-content" class="decision-content">Selecione uma estratégia para criar uma recomendação revisável.</div>
+              <button id="decision-button" disabled>Gerar pacote de decisão</button>
+            </section>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer>Horizon 90 é um ensaio multiagente inspirado no MiroFish. Não faz previsão ou remarcação real.</footer>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
